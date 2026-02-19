@@ -18,39 +18,56 @@ LETRAS = ["A","B","C","D","E","F","G","H","I","J",
 
 st.title("Visualización de Ruta Óptima (Q-Learning)")
 
-# ====== MATRIZ R ======
-R = np.array([
-# A  B  C  D  E  F  G  H  I  J  K  L  M  N  Ñ  O  P  Q  R  S  T  U
-[ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # A
-[ 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # B
-[ 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # C
-[ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # D
-[ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # E
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],  # F
-[ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # G
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],  # H
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # I
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # J
-[ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # K
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # L
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],  # M
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],  # N
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # Ñ
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],  # O
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],  # P
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0],  # Q
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],  # R
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],  # S
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],  # T
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]   # U
+# ====== MATRIZ BASE ======
+R_base = np.array([
+[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
+[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0]
 ])
+
+# ====== SELECCIÓN INTERACTIVA ======
+col1, col2 = st.columns(2)
+
+with col1:
+    letra_inicio = st.selectbox("Selecciona nodo de inicio:", LETRAS)
+
+with col2:
+    letra_objetivo = st.selectbox("Selecciona nodo objetivo:", LETRAS, index=10)
+
+inicio = LETRAS.index(letra_inicio)
+objetivo = LETRAS.index(letra_objetivo)
+
+# ====== ACTUALIZAR RECOMPENSAS ======
+R = R_base.copy()
+for i in range(22):
+    if R[i, objetivo] > 0:
+        R[i, objetivo] = 100
 
 # ====== Q-LEARNING ======
 gamma = 0.75
 alpha = 0.9
 Q = np.zeros((22,22))
 
-for i in range(1000):
+for _ in range(1000):
     estado = np.random.randint(0,22)
     acciones = np.where(R[estado] > 0)[0]
     if len(acciones) == 0:
@@ -59,12 +76,6 @@ for i in range(1000):
     siguiente = accion
     TD = R[estado, accion] + gamma * np.max(Q[siguiente]) - Q[estado, accion]
     Q[estado, accion] += alpha * TD
-
-# ====== OBJETIVO ======
-idx100 = np.argwhere(R == 100)
-u100, v100 = int(idx100[0,0]), int(idx100[0,1])
-inicio = 0
-objetivo = v100
 
 # ====== OBTENER RUTA ======
 def obtener_ruta(Q, R, inicio, objetivo, max_pasos=60):
@@ -96,7 +107,7 @@ for i in range(22):
 
 for i in range(22):
     for j in range(22):
-        if R[i,j] > 0:
+        if R_base[i,j] > 0:
             G.add_edge(i,j)
 
 pos = nx.kamada_kawai_layout(G)
@@ -153,15 +164,17 @@ for i, (u, v) in enumerate(ruta_edges):
                       boxstyle="circle,pad=0.2"))
 
 # Reward label
-target_mid_x = (pos[u100][0] + pos[v100][0]) / 2
-target_mid_y = (pos[u100][1] + pos[v100][1]) / 2
+if ruta_edges:
+    u100 = ruta_edges[-1][0]
+    target_mid_x = (pos[u100][0] + pos[objetivo][0]) / 2
+    target_mid_y = (pos[u100][1] + pos[objetivo][1]) / 2
 
-ax.text(target_mid_x, target_mid_y - 0.08,
-        "REWARD +100",
-        color="black", weight="bold",
-        bbox=dict(facecolor=COLOR_OBJETIVO,
-                  alpha=0.8,
-                  boxstyle="round,pad=0.3"))
+    ax.text(target_mid_x, target_mid_y - 0.08,
+            "REWARD +100",
+            color="black", weight="bold",
+            bbox=dict(facecolor=COLOR_OBJETIVO,
+                      alpha=0.8,
+                      boxstyle="round,pad=0.3"))
 
 plt.title("Visualización de Ruta Óptima (Q-Learning)",
           fontsize=16, fontweight="bold", pad=20)
@@ -170,3 +183,5 @@ ax.axis("off")
 plt.tight_layout()
 
 st.pyplot(fig)
+
+
